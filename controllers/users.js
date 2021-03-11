@@ -4,6 +4,8 @@ const User = require('../models/user');
 
 const CustomError = require('../errors/custom-error');
 
+const jwtSecret = process.env.JWT_SECRET || 'zur-secret';
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -11,7 +13,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '7d' }, // токен будет просрочен через 7 дней после создания
       );
       res.send({ token });
@@ -41,6 +43,7 @@ const postUser = (req, res, next) => {
   const {
     password, email,
   } = req.body;
+  console.log(email);
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       email,
@@ -49,9 +52,10 @@ const postUser = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '7d' }, // токен будет просрочен через 7 дней после создания
       );
+      console.log(token);
       res.send({
         name: user.name,
         _id: user._id,

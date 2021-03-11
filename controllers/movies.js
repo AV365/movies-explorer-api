@@ -31,7 +31,7 @@ const deleteMovie = (req, res, next) => {
 };
 
 const postMovie = (req, res, next) => {
-  console.log(req.user);
+  // console.log(req.user);
   const {
     country, director, duration, year, description,
     image, trailer, thumbnail, movieId, nameRU, nameEN,
