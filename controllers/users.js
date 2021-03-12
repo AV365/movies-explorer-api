@@ -58,12 +58,12 @@ const postUser = (req, res, next) => {
       password: hash, // записываем хеш в базу
     }))
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        jwtSecret,
-        { expiresIn: '7d' }, // токен будет просрочен через 7 дней после создания
-      );
-      //console.log(token);
+      // const token = jwt.sign(
+      //   { _id: user._id },
+      //   jwtSecret,
+      //   { expiresIn: '7d' }, // токен будет просрочен через 7 дней после создания
+      // );
+      // console.log(token);
       res.send({
         name: user.name,
         _id: user._id,

@@ -35,7 +35,7 @@ router.use('/movies', movieRoutes);
 
 router.use('*', () => {
   throw new NotFoundError(errorMessages['route-notfound']);
-  //throw new NotFoundError('Ресурс не найден');
+  // throw new NotFoundError('Ресурс не найден');
 });
 
 module.exports = router;

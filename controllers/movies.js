@@ -65,7 +65,6 @@ const postMovie = (req, res, next) => {
     .then((movie) => {
       if (!movie) {
         throw new BadRequestError(errorMessages['postmovie-badrequest']);
-
       }
       res.send({ data: movie });
     })
