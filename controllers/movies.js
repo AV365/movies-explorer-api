@@ -1,27 +1,34 @@
 const Movies = require('../models/movie');
 
-const CustomError = require('../errors/custom-error');
+// const CustomError = require('../errors/custom-error');
+const {
+  BadRequestError, InternalServerError, NotFoundError, ForbiddenError,
+} = require('../errors/index');
+const { errorMessages } = require('../errors/custom-messages');
 
 const getMovies = (req, res, next) => {
   Movies.find({ owner: req.user._id })
     .then((data) => res.send(data))
     .catch((err) => {
-      throw new CustomError(500, err.message);
+      throw new InternalServerError(err.message);
     }).catch(next);
 };
 
 const deleteMovie = (req, res, next) => {
   Movies.findById(req.params.id).then((data) => {
     if (!data) {
-      throw new CustomError(404, req.params.id);
+      throw new NotFoundError(errorMessages['deletemovie-notfound'].format(req.params.id));
+      // throw new NotFoundError(`Запись ${req.params.id} не найдена`);
     }
     if (String(data.owner) !== String(req.user._id)) {
-      throw new CustomError(403);
+      throw new ForbiddenError(errorMessages['deletemovie-forbidden']);
+      // throw new ForbiddenError('Доступ запрещен');
     }
     Movies.findByIdAndRemove(req.params.id)
       .then((movie) => {
         if (!movie) {
-          throw new CustomError(404, req.param('id'));
+          throw new NotFoundError(errorMessages['deletemovie-notfound'].format(req.params.id));
+          //          throw new NotFoundError(`Запись ${req.param('id')} не найдена`);
         }
         return res.send(movie);
       });
@@ -52,10 +59,16 @@ const postMovie = (req, res, next) => {
   })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new CustomError(400, err.message);
+        throw new BadRequestError(err.message);
       }
     })
-    .then((movie) => res.send({ data: movie }))
+    .then((movie) => {
+      if (!movie) {
+        throw new BadRequestError(errorMessages['postmovie-badrequest']);
+
+      }
+      res.send({ data: movie });
+    })
     .catch(next);
 };
 

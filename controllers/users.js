@@ -2,9 +2,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const CustomError = require('../errors/custom-error');
+// const CustomError = require('../errors/custom-error');
 
-const jwtSecret = process.env.JWT_SECRET || 'zur-secret';
+const {
+  UnauthorizedError, NotFoundError, InternalServerError, ConflictError, BadRequestError,
+} = require('../errors/index');
+const { errorMessages } = require('../errors/custom-messages');
+
+// const jwtSecret = process.env.JWT_SECRET || 'zur-secret';
+const jwtSecret = process.env.JWT_SECRET;
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -19,7 +25,9 @@ const login = (req, res, next) => {
       res.send({ token });
     })
     .catch(() => {
-      next(new CustomError(401, 'Неправильные почта или пароль!'));
+      // console.log(errorMessages);
+      //      next(new UnauthorizedError('Неправильные почта или пароль!'));
+      next(new UnauthorizedError(errorMessages['login-unauthorized']));
     });
 };
 
@@ -27,14 +35,14 @@ const getMyInfo = (req, res, next) => {
   User.findById(req.user._id).select('-_id')
     .then((data) => {
       if (!data) {
-        throw new CustomError(404, req.param('id'));
+        throw new NotFoundError(errorMessages['getmyinfo-notfound'].format(req.param('id')));
         // throw new NotFoundError(`Пользователь ${req.param('id')} не найден!`);
       }
       return res.send(data);
     })
     .catch(next)
     .catch((err) => {
-      throw new CustomError(500, err.message);
+      throw new InternalServerError(err.message);
     })
     .catch(next);
 };
@@ -43,7 +51,7 @@ const postUser = (req, res, next) => {
   const {
     password, email,
   } = req.body;
-  console.log(email);
+  // console.log(email);
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       email,
@@ -55,19 +63,19 @@ const postUser = (req, res, next) => {
         jwtSecret,
         { expiresIn: '7d' }, // токен будет просрочен через 7 дней после создания
       );
-      console.log(token);
+      //console.log(token);
       res.send({
         name: user.name,
         _id: user._id,
         email: user.email,
-        token,
       });
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new CustomError(409, err.keyValue.email);
+        throw new ConflictError(errorMessages['postuser-conflict'].format(email));
+        // throw new ConflictError(`Пользователь уже зарегистрирован`);
       }
-      throw new CustomError(500, err.message);
+      throw new InternalServerError(err.message);
     })
     .catch(next);
 };
@@ -78,7 +86,7 @@ const updateUserProfile = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new CustomError(400, err.message);
+        throw new BadRequestError(err.message);
       }
     })
     .then((user) => res.send({ data: user }))
