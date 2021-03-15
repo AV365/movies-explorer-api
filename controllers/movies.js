@@ -2,7 +2,7 @@ const Movies = require('../models/movie');
 
 // const CustomError = require('../errors/custom-error');
 const {
-  BadRequestError, InternalServerError, NotFoundError, ForbiddenError,
+  BadRequestError, InternalServerError, NotFoundError, ForbiddenError, errorMessageFormat,
 } = require('../errors/index');
 const { errorMessages } = require('../errors/custom-messages');
 
@@ -17,7 +17,7 @@ const getMovies = (req, res, next) => {
 const deleteMovie = (req, res, next) => {
   Movies.findById(req.params.id).then((data) => {
     if (!data) {
-      throw new NotFoundError(errorMessages['deletemovie-notfound'].format(req.params.id));
+      throw new NotFoundError(errorMessageFormat(errorMessages['deletemovie-notfound'], req.params.id));
       // throw new NotFoundError(`Запись ${req.params.id} не найдена`);
     }
     if (String(data.owner) !== String(req.user._id)) {
@@ -27,7 +27,7 @@ const deleteMovie = (req, res, next) => {
     Movies.findByIdAndRemove(req.params.id)
       .then((movie) => {
         if (!movie) {
-          throw new NotFoundError(errorMessages['deletemovie-notfound'].format(req.params.id));
+          throw new NotFoundError(errorMessageFormat(errorMessages['deletemovie-notfound'], req.params.id));
           //          throw new NotFoundError(`Запись ${req.param('id')} не найдена`);
         }
         return res.send(movie);

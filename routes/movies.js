@@ -3,10 +3,10 @@ const express = require('express');
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 
+const { errorMessages } = require('../errors/custom-messages');
+
 const router = express.Router();
 const controller = require('../controllers/movies');
-
-// const regexpUrl = /https?:\/\/[\w\d-]*\.*[\w\d-]{2,}.\/*[\w\d-]+.[-._~:/?#[\]@!$&'()*+,;=\w\d]*#*$/im;
 
 router.get('/', controller.getMovies);
 
@@ -23,21 +23,21 @@ router.post('/',
           if (validator.isURL(value)) {
             return value;
           }
-          return helpers.message('Поле image заполненно некорректно');
+          return helpers.message(errorMessages['route-noturl']);
         }),
       trailer: Joi.string()
         .required().custom((value, helpers) => {
           if (validator.isURL(value)) {
             return value;
           }
-          return helpers.message('Поле trailer заполненно некорректно');
+          return helpers.message(errorMessages['route-noturl']);
         }),
       thumbnail: Joi.string()
         .required().custom((value, helpers) => {
           if (validator.isURL(value)) {
             return value;
           }
-          return helpers.message('Поле thumbnail заполненно некорректно');
+          return helpers.message(errorMessages['route-noturl']);
         }),
       movieId: Joi.number().required(),
       nameRU: Joi.string().required(),

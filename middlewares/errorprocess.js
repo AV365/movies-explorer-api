@@ -1,3 +1,5 @@
+const { errorMessages } = require('../errors/custom-messages');
+
 module.exports = (err, req, res, next) => {
   // console.log(err);
   // если у ошибки нет статуса, выставляем 500
@@ -8,7 +10,7 @@ module.exports = (err, req, res, next) => {
     .send({
       // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === 500
-        ? 'Ошибка сервера'
+        ? errorMessages.servererror
         : message,
     });
   next();

@@ -5,7 +5,8 @@ const User = require('../models/user');
 // const CustomError = require('../errors/custom-error');
 
 const {
-  UnauthorizedError, NotFoundError, InternalServerError, ConflictError, BadRequestError,
+  UnauthorizedError, NotFoundError, InternalServerError,
+  ConflictError, BadRequestError, errorMessageFormat,
 } = require('../errors/index');
 const { errorMessages } = require('../errors/custom-messages');
 
@@ -27,7 +28,7 @@ const login = (req, res, next) => {
     .catch(() => {
       // console.log(errorMessages);
       //      next(new UnauthorizedError('Неправильные почта или пароль!'));
-      next(new UnauthorizedError(errorMessages['login-unauthorized']));
+      next(new UnauthorizedError(errorMessageFormat(errorMessages['login-unauthorized'], email)));
     });
 };
 
@@ -35,7 +36,8 @@ const getMyInfo = (req, res, next) => {
   User.findById(req.user._id).select('-_id')
     .then((data) => {
       if (!data) {
-        throw new NotFoundError(errorMessages['getmyinfo-notfound'].format(req.param('id')));
+        throw new NotFoundError(errorMessageFormat(errorMessages['getmyinfo-notfound'], req.param('id')));
+
         // throw new NotFoundError(`Пользователь ${req.param('id')} не найден!`);
       }
       return res.send(data);
@@ -72,7 +74,8 @@ const postUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new ConflictError(errorMessages['postuser-conflict'].format(email));
+        //        throw new ConflictError(errorMessages['postuser-conflict'].format(email));
+        throw new ConflictError(errorMessageFormat(errorMessages['postuser-conflict'], email));
         // throw new ConflictError(`Пользователь уже зарегистрирован`);
       }
       throw new InternalServerError(err.message);

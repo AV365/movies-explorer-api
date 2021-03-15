@@ -40,7 +40,7 @@ app.use('*', cors(apiSettings.corsOptions));
 app.use(helmet());
 
 // const CustomError = require('./errors/custom-error');
-const { errorMessages } = require('./tmp/custom-error-messages');
+// const { errorMessages } = require('./tmp/custom-error-messages');
 
 const router = require('./routes');
 

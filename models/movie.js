@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+const validator = require('validator');
+const { errorMessages } = require('../errors/custom-messages');
+
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
@@ -26,10 +29,11 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        const regexpUrl = /https?:\/\/[\w\d-]*\.*[\w\d-]{2,}.\/*[\w\d-]+.[-._~:/?#[\]@!$&'()*+,;=\w\d]*#*$/img;
-        return regexpUrl.test(v);
+        return validator.isURL(v);
+
+        // return regexpUrl.test(v);
       },
-      message: 'Адрес имеет неправильный формат',
+      message: errorMessages['moviemodel-noturl'],
     },
   },
   trailer: {
@@ -37,10 +41,9 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        const regexpUrl = /https?:\/\/[\w\d-]*\.*[\w\d-]{2,}.\/*[\w\d-]+.[-._~:/?#[\]@!$&'()*+,;=\w\d]*#*$/img;
-        return regexpUrl.test(v);
+        return validator.isURL(v);
       },
-      message: 'Адрес имеет неправильный формат',
+      message: errorMessages['moviemodel-noturl'],
     },
   },
   thumbnail: {
@@ -48,10 +51,9 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        const regexpUrl = /https?:\/\/[\w\d-]*\.*[\w\d-]{2,}.\/*[\w\d-]+.[-._~:/?#[\]@!$&'()*+,;=\w\d]*#*$/img;
-        return regexpUrl.test(v);
+        return validator.isURL(v);
       },
-      message: 'Адрес имеет неправильный формат',
+      message: errorMessages['moviemodel-noturl'],
     },
   },
   owner: {

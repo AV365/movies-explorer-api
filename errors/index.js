@@ -1,9 +1,22 @@
-String.prototype.format = function () {
-  a = this;
-  for (k in arguments) {
-    a = a.replace(`{${k}}`, arguments[k]);
+// String.prototype.format = function () {
+//   a = this;
+//   for (k in arguments) {
+//     a = a.replace(`{${k}}`, arguments[k]);
+//   }
+//   return a;
+// };
+
+const errorMessageFormat = (msg, ...params) => {
+  let msgWork = msg;
+
+  /* eslint no-restricted-syntax: ["error", "FunctionExpression",
+  "WithStatement", "BinaryExpression[operator='in']"] */
+  for (const k in params) {
+    if (Object.prototype.hasOwnProperty.call(params, k)) {
+      msgWork = msgWork.replace(`{${k}}`, params[k]);
+    }
   }
-  return a;
+  return msgWork;
 };
 
 const BadRequestError = require('./400-bad-request-error');
@@ -14,8 +27,6 @@ const ConflictError = require('./409-conflict');
 
 const InternalServerError = require('./500-internal-server-error');
 
-const CustomError = require('../tmp/custom-error');
-
 module.exports = {
   BadRequestError,
   UnauthorizedError,
@@ -23,5 +34,5 @@ module.exports = {
   ConflictError,
   InternalServerError,
   ForbiddenError,
-  CustomError,
+  errorMessageFormat,
 };
