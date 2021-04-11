@@ -33,7 +33,8 @@ const login = (req, res, next) => {
 };
 
 const getMyInfo = (req, res, next) => {
-  User.findById(req.user._id).select('-_id')
+// .select('-_id')
+  User.findById(req.user._id)
     .then((data) => {
       if (!data) {
         throw new NotFoundError(errorMessageFormat(errorMessages['getmyinfo-notfound'], req.param('id')));

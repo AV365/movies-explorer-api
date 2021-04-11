@@ -24,15 +24,17 @@ const deleteMovie = (req, res, next) => {
       throw new ForbiddenError(errorMessages['deletemovie-forbidden']);
       // throw new ForbiddenError('Доступ запрещен');
     }
+
     Movies.findByIdAndRemove(req.params.id)
       .then((movie) => {
         if (!movie) {
           throw new NotFoundError(errorMessageFormat(errorMessages['deletemovie-notfound'], req.params.id));
           //          throw new NotFoundError(`Запись ${req.param('id')} не найдена`);
         }
+        //        console.log('Удаляем карточку');
         return res.send(movie);
       });
-    res.send({ data });
+    // res.send({ data });
   })
     .catch(next);
 };
