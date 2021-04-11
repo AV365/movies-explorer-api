@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "set NODE_ENV=production&&node app.js",
-    "dev": "SET NODE_ENV=test&&nodemon app.js",
+    "dev": "set NODE_ENV=test&&nodemon app.js",
     "setenv": "scp -r .env.production admin@84.201.154.221:/home/admin/movies-explorer-api/"
   },
   "license": "ISC",
